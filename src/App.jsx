@@ -1007,9 +1007,24 @@ function App() {
                                 }`}>
                                   {isLikelyGame ? 'DETECTADO' : 'NÃO DETECTADO'}
                                 </div>
-                                {gameResults && gameResults.detectedGame && (
-                                  <div className="text-xs mt-1 text-orange-600">
-                                    {gameResults.detectedGame}
+                                {/* Mostrar detalhes de jogos detectados */}
+                                {isLikelyGame && (
+                                  <div className="text-xs mt-1 space-y-1">
+                                    {gameResults && gameResults.detectedGame && (
+                                      <div className="bg-orange-200 text-orange-800 px-2 py-1 rounded inline-block">
+                                        🎯 {gameResults.detectedGame}
+                                      </div>
+                                    )}
+                                    {results && results.find(r => r.className === 'Drawing')?.probability > 0.6 && (
+                                      <div className="bg-blue-200 text-blue-800 px-2 py-1 rounded inline-block ml-1">
+                                        🎨 Drawing: {(results.find(r => r.className === 'Drawing')?.probability * 100).toFixed(0)}%
+                                      </div>
+                                    )}
+                                    {gameResults && gameResults.confidence && (
+                                      <div className="text-orange-600 mt-1">
+                                        Confiança: {(gameResults.confidence * 100).toFixed(1)}%
+                                      </div>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -1037,8 +1052,20 @@ function App() {
                                     : 'ATIVIDADE NORMAL'
                                   }
                                 </div>
-                                <div className="text-xs mt-1">
-                                  {idlenessResults.idlenessPercentage.toFixed(1)}% ocioso
+                                <div className="text-xs mt-1 space-y-1">
+                                  <div className="bg-slate-200 text-slate-800 px-2 py-1 rounded inline-block">
+                                    📊 {idlenessResults.idlenessPercentage.toFixed(1)}% ocioso
+                                  </div>
+                                  {idlenessResults.timeAnalysis && (
+                                    <div className="bg-red-200 text-red-800 px-2 py-1 rounded inline-block ml-1">
+                                      ⏰ {idlenessDetector?.formatDuration(idlenessResults.timeAnalysis.veryLowActivityTime)} sem movimento
+                                    </div>
+                                  )}
+                                  {idlenessResults.timeAnalysis?.workPatterns.consecutiveIdleMinutes > 0 && (
+                                    <div className="text-red-600 mt-1">
+                                      Maior período ocioso: {idlenessResults.timeAnalysis.workPatterns.consecutiveIdleMinutes} min
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -1083,19 +1110,37 @@ function App() {
                                 {isNSFW && (
                                   <div className="flex items-center text-red-700">
                                     <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-                                    <strong>CRÍTICO:</strong> Conteúdo adulto detectado - Requer ação imediata
+                                    <strong>CRÍTICO:</strong> Conteúdo adulto detectado
+                                    {results && (
+                                      <span className="ml-2 text-xs">
+                                        {results.find(r => r.className === 'Porn')?.probability > 0.5 && '(Pornografia)'}
+                                        {results.find(r => r.className === 'Sexy')?.probability > 0.7 && '(Conteúdo Sexy)'}
+                                        {results.find(r => r.className === 'Hentai')?.probability > 0.5 && '(Hentai)'}
+                                      </span>
+                                    )}
+                                    - Requer ação imediata
                                   </div>
                                 )}
                                 {isLikelyGame && (
                                   <div className="flex items-center text-orange-700">
                                     <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                                    <strong>ATENÇÃO:</strong> Atividade de jogos durante horário de trabalho
+                                    <strong>ATENÇÃO:</strong> Atividade de jogos detectada
+                                    {gameResults && gameResults.detectedGame && (
+                                      <span className="ml-2 text-xs">({gameResults.detectedGame})</span>
+                                    )}
+                                    {results && results.find(r => r.className === 'Drawing')?.probability > 0.6 && (
+                                      <span className="ml-2 text-xs">(Drawing: {(results.find(r => r.className === 'Drawing')?.probability * 100).toFixed(0)}%)</span>
+                                    )}
+                                    - Durante horário de trabalho
                                   </div>
                                 )}
                                 {idlenessResults.isIdle && (
                                   <div className="flex items-center text-red-700">
                                     <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-                                    <strong>ALERTA:</strong> Período prolongado de inatividade ({idlenessResults.timeAnalysis?.workPatterns.consecutiveIdleMinutes || 0} min)
+                                    <strong>ALERTA:</strong> Alta ociosidade detectada ({idlenessResults.idlenessPercentage.toFixed(1)}%)
+                                    {idlenessResults.timeAnalysis?.workPatterns.consecutiveIdleMinutes > 0 && (
+                                      <span className="ml-2 text-xs">- Maior período: {idlenessResults.timeAnalysis.workPatterns.consecutiveIdleMinutes} min</span>
+                                    )}
                                   </div>
                                 )}
                                 {idlenessResults.idlenessPercentage > 60 && (
@@ -1124,21 +1169,29 @@ function App() {
                               <div className="font-semibold text-sm text-blue-800 mb-2">🎯 Ações Recomendadas</div>
                               <div className="space-y-1 text-xs text-blue-700">
                                 {isNSFW && (
-                                  <div>• Aplicar medidas disciplinares conforme política da empresa</div>
+                                  <div>• <strong>Conteúdo NSFW:</strong> Aplicar medidas disciplinares conforme política da empresa</div>
                                 )}
                                 {isLikelyGame && (
-                                  <div>• Conversar sobre uso adequado de recursos da empresa</div>
+                                  <div>• <strong>Jogos detectados:</strong> Conversar sobre uso adequado de recursos da empresa
+                                    {gameResults && gameResults.detectedGame && (
+                                      <span className="text-orange-600"> ({gameResults.detectedGame})</span>
+                                    )}
+                                  </div>
                                 )}
                                 {idlenessResults.isIdle && (
-                                  <div>• Verificar carga de trabalho e necessidade de suporte adicional</div>
+                                  <div>• <strong>Alta ociosidade:</strong> Verificar carga de trabalho e necessidade de suporte adicional</div>
                                 )}
                                 {idlenessResults.idlenessPercentage > 60 && (
-                                  <div>• Avaliar treinamento em ferramentas de produtividade</div>
+                                  <div>• <strong>Baixa produtividade:</strong> Avaliar treinamento em ferramentas de produtividade</div>
                                 )}
                                 {idlenessResults.timeAnalysis?.workPatterns.productiveHours.length > 0 && (
-                                  <div>• Otimizar horários de trabalho baseado nos picos de produtividade</div>
+                                  <div>• <strong>Otimização:</strong> Ajustar horários baseado nos picos de produtividade identificados</div>
                                 )}
-                                <div>• Documentar evidências para acompanhamento futuro</div>
+                                {urlResults && urlResults.urls.length > 0 && (
+                                  <div>• <strong>URLs detectadas:</strong> Verificar se o acesso a websites está relacionado ao trabalho</div>
+                                )}
+                                <div>• <strong>Documentação:</strong> Registrar evidências para acompanhamento e auditoria futura</div>
+                                <div>• <strong>Monitoramento:</strong> Agendar revisão em 7-14 dias para avaliar melhorias</div>
                               </div>
                             </div>
                           </div>
@@ -1191,7 +1244,7 @@ function App() {
 
         {/* Footer */}
         <footer className="text-center text-sm text-slate-500 mt-8">
-          <p>{import.meta.env.VITE_APP_VERSION || 'v7.3.3-resumo-gerencial'} | Build: {new Date().toLocaleString('pt-BR')}</p>
+          <p>{import.meta.env.VITE_APP_VERSION || 'v7.3.4-resumo-detalhado'} | Build: {new Date().toLocaleString('pt-BR')}</p>
           <p>Processamento 100% local • Borramento automático de evidências • NSFW + Gaming + URL + Análise de Ociosidade • Validação de acuidade</p>
         </footer>
       </div>
