@@ -619,7 +619,7 @@ function App() {
                           </div>
                           <div className="text-sm text-slate-600">
                             Confiança: {(gameResults.confidence * 100).toFixed(1)}%
-                            {results?.find(r => r.className === 'Drawing')?.probability > 0.6 && (
+                            {results?.find(r => r.className === 'Drawing')?.probability > (parseFloat(import.meta.env.VITE_GAME_DRAWING_THRESHOLD) || 0.6) && (
                               <span className="ml-2 text-blue-600">
                                 + Drawing: {(results.find(r => r.className === 'Drawing').probability * 100).toFixed(1)}%
                               </span>
@@ -982,13 +982,13 @@ function App() {
                                 </div>
                                 {isNSFW && results && (
                                   <div className="text-xs mt-1">
-                                    {results.find(r => r.className === 'Porn')?.probability > 0.5 && (
+                                    {results.find(r => r.className === 'Porn')?.probability > (parseFloat(import.meta.env.VITE_NSFW_PORN_THRESHOLD) || 0.5) && (
                                       <span className="bg-red-200 text-red-800 px-1 rounded">Pornografia</span>
                                     )}
-                                    {results.find(r => r.className === 'Sexy')?.probability > 0.7 && (
+                                    {results.find(r => r.className === 'Sexy')?.probability > (parseFloat(import.meta.env.VITE_NSFW_SEXY_THRESHOLD) || 0.7) && (
                                       <span className="bg-orange-200 text-orange-800 px-1 rounded ml-1">Conteúdo Sexy</span>
                                     )}
-                                    {results.find(r => r.className === 'Hentai')?.probability > 0.5 && (
+                                    {results.find(r => r.className === 'Hentai')?.probability > (parseFloat(import.meta.env.VITE_NSFW_HENTAI_THRESHOLD) || 0.5) && (
                                       <span className="bg-purple-200 text-purple-800 px-1 rounded ml-1">Hentai</span>
                                     )}
                                   </div>
@@ -1015,7 +1015,7 @@ function App() {
                                         🎯 {gameResults.detectedGame}
                                       </div>
                                     )}
-                                    {results && results.find(r => r.className === 'Drawing')?.probability > 0.6 && (
+                                    {results && results.find(r => r.className === 'Drawing')?.probability > (parseFloat(import.meta.env.VITE_GAME_DRAWING_THRESHOLD) || 0.6) && (
                                       <div className="bg-blue-200 text-blue-800 px-2 py-1 rounded inline-block ml-1">
                                         🎨 Drawing: {(results.find(r => r.className === 'Drawing')?.probability * 100).toFixed(0)}%
                                       </div>
@@ -1113,9 +1113,9 @@ function App() {
                                     <strong>CRÍTICO:</strong> Conteúdo adulto detectado
                                     {results && (
                                       <span className="ml-2 text-xs">
-                                        {results.find(r => r.className === 'Porn')?.probability > 0.5 && '(Pornografia)'}
-                                        {results.find(r => r.className === 'Sexy')?.probability > 0.7 && '(Conteúdo Sexy)'}
-                                        {results.find(r => r.className === 'Hentai')?.probability > 0.5 && '(Hentai)'}
+                                        {results.find(r => r.className === 'Porn')?.probability > (parseFloat(import.meta.env.VITE_NSFW_PORN_THRESHOLD) || 0.5) && '(Pornografia)'}
+                                        {results.find(r => r.className === 'Sexy')?.probability > (parseFloat(import.meta.env.VITE_NSFW_SEXY_THRESHOLD) || 0.7) && '(Conteúdo Sexy)'}
+                                        {results.find(r => r.className === 'Hentai')?.probability > (parseFloat(import.meta.env.VITE_NSFW_HENTAI_THRESHOLD) || 0.5) && '(Hentai)'}
                                       </span>
                                     )}
                                     - Requer ação imediata
@@ -1128,7 +1128,7 @@ function App() {
                                     {gameResults && gameResults.detectedGame && (
                                       <span className="ml-2 text-xs">({gameResults.detectedGame})</span>
                                     )}
-                                    {results && results.find(r => r.className === 'Drawing')?.probability > 0.6 && (
+                                    {results && results.find(r => r.className === 'Drawing')?.probability > (parseFloat(import.meta.env.VITE_GAME_DRAWING_THRESHOLD) || 0.6) && (
                                       <span className="ml-2 text-xs">(Drawing: {(results.find(r => r.className === 'Drawing')?.probability * 100).toFixed(0)}%)</span>
                                     )}
                                     - Durante horário de trabalho

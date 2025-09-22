@@ -356,7 +356,8 @@ export class AdvancedImageAnalyzer {
       factors.densityMatch = densityMatch;
       confidence += densityMatch * 0.1;
       
-      if (confidence > 0.3) { // Threshold mais baixo para capturar mais jogos
+      const gameThreshold = parseFloat(import.meta.env.VITE_GAME_DETECTION_THRESHOLD) || 0.3;
+      if (confidence > gameThreshold) { // Threshold configurável para capturar jogos
         detectedGames.push({
           name: gameName,
           confidence: confidence,
@@ -393,7 +394,8 @@ export class AdvancedImageAnalyzer {
       factors.layoutMatch = layoutMatch;
       confidence += layoutMatch * 0.2;
       
-      if (confidence > 0.25) {
+      const softwareThreshold = parseFloat(import.meta.env.VITE_SOFTWARE_DETECTION_THRESHOLD) || 0.25;
+      if (confidence > softwareThreshold) {
         detectedSoftware.push({
           name: softwareName,
           confidence: confidence,

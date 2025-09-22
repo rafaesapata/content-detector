@@ -34,7 +34,8 @@ class GameDetector {
     
     // Calcular score com algoritmo melhorado
     const confidence = this.calculateGameScore(features);
-    const isGaming = confidence > 0.65; // Threshold mais restritivo para reduzir falsos positivos
+    const gameThreshold = parseFloat(import.meta.env.VITE_GAME_DETECTION_THRESHOLD) || 0.65;
+    const isGaming = confidence > gameThreshold;
     
     return {
       isGaming,
