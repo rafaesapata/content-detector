@@ -392,11 +392,26 @@ function App() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-slate-800 mb-2">
-            {import.meta.env.VITE_APP_TITLE || 'Detector Inteligente'}
+            🔍 {import.meta.env.VITE_APP_TITLE || 'Detector Inteligente'}
           </h1>
-          <p className="text-slate-600">
-            Análise completa: NSFW, jogos, URLs e software em imagens JPG/PNG
+          <p className="text-slate-600 text-lg">
+            Análise automatizada de imagens com IA • NSFW + Gaming + URL + Análise de Ociosidade
           </p>
+          <div className="mt-4">
+            <Button
+              onClick={() => window.open('/swagger-ui.html', '_blank')}
+              variant="outline"
+              className="mr-2"
+            >
+              📚 Documentação API
+            </Button>
+            <Button
+              onClick={() => window.open('/swagger.yaml', '_blank')}
+              variant="outline"
+            >
+              📋 Especificação OpenAPI
+            </Button>
+          </div>
         </div>
 
         {/* Carregar Modelo */}
@@ -1244,8 +1259,19 @@ function App() {
 
         {/* Footer */}
         <footer className="text-center text-sm text-slate-500 mt-8">
-          <p>{import.meta.env.VITE_APP_VERSION || 'v7.3.4-resumo-detalhado'} | Build: {new Date().toLocaleString('pt-BR')}</p>
+          <p>{import.meta.env.VITE_APP_VERSION || 'v7.3.4-swagger-completo'} | Build: {new Date().toLocaleString('pt-BR')}</p>
           <p>Processamento 100% local • Borramento automático de evidências • NSFW + Gaming + URL + Análise de Ociosidade • Validação de acuidade</p>
+          <div className="mt-2 space-x-4">
+            <a href="/swagger-ui.html" target="_blank" className="text-blue-600 hover:text-blue-800">
+              📚 API Docs
+            </a>
+            <a href="/swagger.yaml" target="_blank" className="text-blue-600 hover:text-blue-800">
+              📋 OpenAPI Spec
+            </a>
+            <a href="https://github.com/rafaesapata/content-detector" target="_blank" className="text-blue-600 hover:text-blue-800">
+              🔗 GitHub
+            </a>
+          </div>
         </footer>
       </div>
     </div>

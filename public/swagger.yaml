@@ -1,0 +1,1144 @@
+openapi: 3.0.3
+info:
+  title: Detector Inteligente API
+  description: |
+    API completa para análise automatizada de imagens com detecção de conteúdo NSFW, jogos, software, URLs e análise de ociosidade.
+    
+    ## Funcionalidades Principais
+    
+    - **Detecção NSFW**: 93% de precisão usando NSFWJS
+    - **Detecção de Jogos**: Algoritmo híbrido com foco em League of Legends
+    - **OCR Avançado**: Extração de URLs e software com Tesseract.js
+    - **Análise de Ociosidade**: Comparação temporal de screenshots
+    - **Borramento Automático**: 4 níveis de proteção de evidências
+    - **Resumo Gerencial**: Dashboard executivo para tomada de decisões
+    
+    ## Processamento Local
+    
+    Toda análise é realizada localmente no navegador, garantindo máxima privacidade e conformidade com LGPD.
+    
+    ## Configurabilidade
+    
+    60+ parâmetros configuráveis via variáveis de ambiente para ajuste fino da sensibilidade.
+    
+  version: 7.3.4
+  contact:
+    name: Rafael Sapata
+    email: rafaesapata@gmail.com
+    url: https://github.com/rafaesapata/content-detector
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://github.com/rafaesapata/content-detector/blob/main/LICENSE
+
+servers:
+  - url: https://api.detector-inteligente.com/v1
+    description: Servidor de Produção
+  - url: https://staging-api.detector-inteligente.com/v1
+    description: Servidor de Staging
+  - url: http://localhost:5000/v1
+    description: Desenvolvimento Local
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
+
+paths:
+  /analyze:
+    post:
+      summary: Análise Completa de Imagem
+      description: |
+        Realiza análise completa de uma imagem incluindo:
+        - Detecção NSFW (Porn, Hentai, Sexy, Drawing, Neutral)
+        - Detecção de jogos com algoritmo híbrido
+        - OCR para extração de URLs e software
+        - Borramento automático quando aplicável
+        - Resumo gerencial executivo
+      operationId: analyzeImage
+      tags:
+        - Análise Principal
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Arquivo de imagem (JPG, PNG, WebP)
+                api_key:
+                  type: string
+                  description: Chave de API para autenticação
+                blur_enabled:
+                  type: boolean
+                  default: true
+                  description: Habilitar borramento automático
+                include_summary:
+                  type: boolean
+                  default: true
+                  description: Incluir resumo gerencial
+                sensitivity_level:
+                  type: string
+                  enum: [low, medium, high, custom]
+                  default: medium
+                  description: Nível de sensibilidade da detecção
+            examples:
+              basic_analysis:
+                summary: Análise básica
+                value:
+                  image: "[binary data]"
+                  api_key: "demo-key-123"
+              high_sensitivity:
+                summary: Alta sensibilidade
+                value:
+                  image: "[binary data]"
+                  api_key: "demo-key-123"
+                  sensitivity_level: "high"
+                  blur_enabled: true
+      responses:
+        '200':
+          description: Análise realizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResult'
+              examples:
+                nsfw_detected:
+                  summary: Conteúdo NSFW detectado
+                  value:
+                    success: true
+                    analysis_id: "ana_1234567890"
+                    timestamp: "2025-09-22T15:30:00Z"
+                    processing_time_ms: 1250
+                    nsfw:
+                      detected: true
+                      confidence: 0.85
+                      categories:
+                        - type: "Porn"
+                          probability: 0.87
+                        - type: "Sexy"
+                          probability: 0.23
+                      blur_applied: true
+                      blur_level: "heavy"
+                    games:
+                      detected: false
+                      confidence: 0.12
+                    urls:
+                      detected: false
+                      count: 0
+                    executive_summary:
+                      status: "critical"
+                      alerts:
+                        - type: "critical"
+                          message: "Conteúdo adulto detectado (Pornografia) - Requer ação imediata"
+                      recommendations:
+                        - "Aplicar medidas disciplinares conforme política da empresa"
+                        - "Documentar evidências para acompanhamento futuro"
+                game_detected:
+                  summary: Jogo detectado
+                  value:
+                    success: true
+                    analysis_id: "ana_1234567891"
+                    timestamp: "2025-09-22T15:35:00Z"
+                    processing_time_ms: 980
+                    nsfw:
+                      detected: false
+                      confidence: 0.15
+                    games:
+                      detected: true
+                      confidence: 0.78
+                      game_name: "League of Legends"
+                      detection_method: "hybrid"
+                      blur_applied: true
+                      blur_level: "light"
+                    urls:
+                      detected: false
+                      count: 0
+                    executive_summary:
+                      status: "attention"
+                      alerts:
+                        - type: "attention"
+                          message: "Atividade de jogos detectada (League of Legends) - Durante horário de trabalho"
+                      recommendations:
+                        - "Conversar sobre uso adequado de recursos da empresa"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /analyze/batch:
+    post:
+      summary: Análise em Lote (ZIP)
+      description: |
+        Analisa múltiplas imagens de um arquivo ZIP, incluindo:
+        - Análise individual de cada imagem
+        - Análise temporal de ociosidade
+        - Padrões de atividade por horário
+        - Resumo consolidado para gestão
+      operationId: analyzeBatch
+      tags:
+        - Análise Principal
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - zip_file
+              properties:
+                zip_file:
+                  type: string
+                  format: binary
+                  description: Arquivo ZIP contendo imagens com timestamp no nome
+                api_key:
+                  type: string
+                  description: Chave de API para autenticação
+                include_idleness:
+                  type: boolean
+                  default: true
+                  description: Incluir análise de ociosidade
+                time_analysis:
+                  type: boolean
+                  default: true
+                  description: Incluir análise temporal detalhada
+      responses:
+        '200':
+          description: Análise em lote realizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchAnalysisResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+
+  /analyze/nsfw:
+    post:
+      summary: Detecção NSFW Específica
+      description: |
+        Análise focada apenas em conteúdo NSFW com alta precisão.
+        Ideal para moderação de conteúdo e compliance.
+      operationId: analyzeNSFW
+      tags:
+        - Detecção Específica
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                thresholds:
+                  $ref: '#/components/schemas/NSFWThresholds'
+      responses:
+        '200':
+          description: Análise NSFW realizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NSFWResult'
+
+  /analyze/games:
+    post:
+      summary: Detecção de Jogos Específica
+      description: |
+        Análise focada em detecção de jogos com algoritmo híbrido.
+        Otimizado para League of Legends e outros jogos populares.
+      operationId: analyzeGames
+      tags:
+        - Detecção Específica
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                game_focus:
+                  type: string
+                  enum: [lol, steam, general]
+                  default: general
+                  description: Foco específico de detecção
+      responses:
+        '200':
+          description: Análise de jogos realizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameResult'
+
+  /analyze/ocr:
+    post:
+      summary: OCR e Detecção de URLs/Software
+      description: |
+        Extração de texto, URLs e detecção de software usando OCR avançado.
+        Suporte a 100+ idiomas com Tesseract.js.
+      operationId: analyzeOCR
+      tags:
+        - Detecção Específica
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                language:
+                  type: string
+                  default: "por+eng"
+                  description: Idiomas para OCR (formato Tesseract)
+                extract_urls:
+                  type: boolean
+                  default: true
+                detect_software:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: OCR realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCRResult'
+
+  /analyze/idleness:
+    post:
+      summary: Análise de Ociosidade
+      description: |
+        Análise temporal de atividade baseada em comparação de screenshots.
+        Identifica padrões de produtividade e períodos ociosos.
+      operationId: analyzeIdleness
+      tags:
+        - Análise Temporal
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - images
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Múltiplas imagens ordenadas por timestamp
+                time_window:
+                  type: integer
+                  default: 3600
+                  description: Janela de tempo em segundos
+      responses:
+        '200':
+          description: Análise de ociosidade realizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdlenessResult'
+
+  /config:
+    get:
+      summary: Obter Configurações Atuais
+      description: |
+        Retorna as configurações atuais da API incluindo thresholds,
+        limites e parâmetros de detecção.
+      operationId: getConfig
+      tags:
+        - Configuração
+      responses:
+        '200':
+          description: Configurações obtidas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigResult'
+
+    put:
+      summary: Atualizar Configurações
+      description: |
+        Atualiza configurações da API para ajuste fino da sensibilidade.
+        Requer permissões administrativas.
+      operationId: updateConfig
+      tags:
+        - Configuração
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigUpdate'
+      responses:
+        '200':
+          description: Configurações atualizadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigResult'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /health:
+    get:
+      summary: Status da API
+      description: |
+        Verifica o status de saúde da API e seus componentes.
+        Inclui métricas de performance e disponibilidade.
+      operationId: healthCheck
+      tags:
+        - Sistema
+      responses:
+        '200':
+          description: API funcionando normalmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResult'
+
+  /metrics:
+    get:
+      summary: Métricas de Performance
+      description: |
+        Retorna métricas detalhadas de performance, uso e precisão.
+        Formato compatível com Prometheus.
+      operationId: getMetrics
+      tags:
+        - Sistema
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Métricas obtidas com sucesso
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  # HELP detector_requests_total Total number of requests
+                  # TYPE detector_requests_total counter
+                  detector_requests_total{method="analyze",status="success"} 1234
+                  
+                  # HELP detector_processing_duration_seconds Processing time
+                  # TYPE detector_processing_duration_seconds histogram
+                  detector_processing_duration_seconds_bucket{le="1.0"} 890
+                  detector_processing_duration_seconds_bucket{le="2.0"} 1200
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Chave de API fornecida no header
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT para autenticação avançada
+
+  schemas:
+    AnalysisResult:
+      type: object
+      required:
+        - success
+        - analysis_id
+        - timestamp
+        - processing_time_ms
+        - nsfw
+        - games
+        - urls
+      properties:
+        success:
+          type: boolean
+          description: Indica se a análise foi bem-sucedida
+        analysis_id:
+          type: string
+          description: ID único da análise
+          example: "ana_1234567890"
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp da análise
+        processing_time_ms:
+          type: integer
+          description: Tempo de processamento em milissegundos
+          example: 1250
+        nsfw:
+          $ref: '#/components/schemas/NSFWResult'
+        games:
+          $ref: '#/components/schemas/GameResult'
+        urls:
+          $ref: '#/components/schemas/OCRResult'
+        idleness:
+          $ref: '#/components/schemas/IdlenessResult'
+        executive_summary:
+          $ref: '#/components/schemas/ExecutiveSummary'
+        blur_info:
+          $ref: '#/components/schemas/BlurInfo'
+
+    NSFWResult:
+      type: object
+      required:
+        - detected
+        - confidence
+      properties:
+        detected:
+          type: boolean
+          description: Se conteúdo NSFW foi detectado
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Confiança geral da detecção
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/NSFWCategory'
+        blur_applied:
+          type: boolean
+          description: Se borramento foi aplicado
+        blur_level:
+          type: string
+          enum: [light, medium, heavy, extreme]
+          description: Nível de borramento aplicado
+
+    NSFWCategory:
+      type: object
+      required:
+        - type
+        - probability
+      properties:
+        type:
+          type: string
+          enum: [Porn, Hentai, Sexy, Drawing, Neutral]
+          description: Categoria NSFW
+        probability:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Probabilidade da categoria
+        threshold:
+          type: number
+          format: float
+          description: Threshold usado para esta categoria
+
+    GameResult:
+      type: object
+      required:
+        - detected
+        - confidence
+      properties:
+        detected:
+          type: boolean
+          description: Se jogo foi detectado
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Confiança da detecção
+        game_name:
+          type: string
+          description: Nome do jogo detectado
+          example: "League of Legends"
+        detection_method:
+          type: string
+          enum: [nsfwjs_drawing, game_detector, hybrid]
+          description: Método de detecção usado
+        factors:
+          type: object
+          description: Fatores que contribuíram para a detecção
+          properties:
+            drawing_probability:
+              type: number
+              format: float
+            ui_elements:
+              type: number
+              format: float
+            color_patterns:
+              type: number
+              format: float
+            hud_analysis:
+              type: number
+              format: float
+        blur_applied:
+          type: boolean
+        blur_level:
+          type: string
+          enum: [light, medium, heavy, extreme]
+
+    OCRResult:
+      type: object
+      required:
+        - detected
+        - count
+      properties:
+        detected:
+          type: boolean
+          description: Se URLs ou software foram detectados
+        count:
+          type: integer
+          description: Número total de itens detectados
+        urls:
+          type: array
+          items:
+            $ref: '#/components/schemas/URLItem'
+        software:
+          type: array
+          items:
+            $ref: '#/components/schemas/SoftwareItem'
+        text_extracted:
+          type: string
+          description: Texto completo extraído via OCR
+        confidence:
+          type: number
+          format: float
+          description: Confiança geral do OCR
+
+    URLItem:
+      type: object
+      required:
+        - url
+        - confidence
+      properties:
+        url:
+          type: string
+          format: uri
+          description: URL detectada
+        domain:
+          type: string
+          description: Domínio da URL
+        confidence:
+          type: number
+          format: float
+          description: Confiança da detecção
+        position:
+          $ref: '#/components/schemas/Position'
+
+    SoftwareItem:
+      type: object
+      required:
+        - name
+        - confidence
+      properties:
+        name:
+          type: string
+          description: Nome do software detectado
+        confidence:
+          type: number
+          format: float
+          description: Confiança da detecção
+        category:
+          type: string
+          enum: [browser, ide, game_platform, office, communication]
+          description: Categoria do software
+        position:
+          $ref: '#/components/schemas/Position'
+
+    IdlenessResult:
+      type: object
+      required:
+        - is_idle
+        - idleness_percentage
+      properties:
+        is_idle:
+          type: boolean
+          description: Se período de alta ociosidade foi detectado
+        idleness_percentage:
+          type: number
+          format: float
+          description: Porcentagem de ociosidade
+        time_analysis:
+          $ref: '#/components/schemas/TimeAnalysis'
+        work_patterns:
+          $ref: '#/components/schemas/WorkPatterns'
+        activity_distribution:
+          $ref: '#/components/schemas/ActivityDistribution'
+
+    TimeAnalysis:
+      type: object
+      properties:
+        total_time:
+          type: integer
+          description: Tempo total analisado em minutos
+        very_low_activity_time:
+          type: integer
+          description: Tempo sem atividade em minutos
+        low_activity_time:
+          type: integer
+          description: Tempo com baixa atividade em minutos
+        moderate_activity_time:
+          type: integer
+          description: Tempo com atividade moderada em minutos
+        high_activity_time:
+          type: integer
+          description: Tempo com alta atividade em minutos
+
+    WorkPatterns:
+      type: object
+      properties:
+        consecutive_idle_minutes:
+          type: integer
+          description: Maior período ocioso consecutivo em minutos
+        idle_periods_count:
+          type: integer
+          description: Número de períodos ociosos
+        active_periods_count:
+          type: integer
+          description: Número de períodos ativos
+        productive_hours:
+          type: array
+          items:
+            type: string
+          description: Horas mais produtivas
+        unproductive_hours:
+          type: array
+          items:
+            type: string
+          description: Horas menos produtivas
+
+    ActivityDistribution:
+      type: object
+      properties:
+        very_low_percentage:
+          type: number
+          format: float
+        low_percentage:
+          type: number
+          format: float
+        moderate_percentage:
+          type: number
+          format: float
+        high_percentage:
+          type: number
+          format: float
+
+    ExecutiveSummary:
+      type: object
+      required:
+        - status
+        - alerts
+        - recommendations
+      properties:
+        status:
+          type: string
+          enum: [normal, attention, critical]
+          description: Status geral da análise
+        alerts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alert'
+        recommendations:
+          type: array
+          items:
+            type: string
+          description: Recomendações específicas para gestores
+        metrics:
+          $ref: '#/components/schemas/SummaryMetrics'
+
+    Alert:
+      type: object
+      required:
+        - type
+        - message
+      properties:
+        type:
+          type: string
+          enum: [critical, attention, info, positive]
+          description: Tipo do alerta
+        message:
+          type: string
+          description: Mensagem do alerta
+        details:
+          type: object
+          description: Detalhes específicos do alerta
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Prioridade do alerta (1=baixa, 5=crítica)
+
+    SummaryMetrics:
+      type: object
+      properties:
+        productivity_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Score de produtividade (0-100)
+        risk_level:
+          type: string
+          enum: [low, medium, high, critical]
+          description: Nível de risco identificado
+        compliance_status:
+          type: string
+          enum: [compliant, warning, violation]
+          description: Status de conformidade
+
+    BlurInfo:
+      type: object
+      properties:
+        applied:
+          type: boolean
+          description: Se borramento foi aplicado
+        level:
+          type: string
+          enum: [light, medium, heavy, extreme]
+          description: Nível de borramento
+        reason:
+          type: string
+          description: Motivo do borramento
+        download_url:
+          type: string
+          format: uri
+          description: URL para download da imagem borrada
+
+    BatchAnalysisResult:
+      type: object
+      required:
+        - success
+        - batch_id
+        - total_images
+        - processed_images
+        - results
+      properties:
+        success:
+          type: boolean
+        batch_id:
+          type: string
+          description: ID único do lote
+        total_images:
+          type: integer
+          description: Total de imagens no lote
+        processed_images:
+          type: integer
+          description: Imagens processadas com sucesso
+        processing_time_ms:
+          type: integer
+          description: Tempo total de processamento
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalysisResult'
+        consolidated_summary:
+          $ref: '#/components/schemas/ConsolidatedSummary'
+
+    ConsolidatedSummary:
+      type: object
+      properties:
+        overall_status:
+          type: string
+          enum: [normal, attention, critical]
+        nsfw_detections:
+          type: integer
+          description: Total de detecções NSFW
+        game_detections:
+          type: integer
+          description: Total de detecções de jogos
+        productivity_analysis:
+          $ref: '#/components/schemas/ProductivityAnalysis'
+        time_patterns:
+          $ref: '#/components/schemas/TimePatterns'
+        recommendations:
+          type: array
+          items:
+            type: string
+
+    ProductivityAnalysis:
+      type: object
+      properties:
+        overall_productivity:
+          type: number
+          format: float
+          description: Produtividade geral (0-100)
+        peak_hours:
+          type: array
+          items:
+            type: string
+          description: Horários de pico de produtividade
+        low_activity_periods:
+          type: array
+          items:
+            type: string
+          description: Períodos de baixa atividade
+
+    TimePatterns:
+      type: object
+      properties:
+        work_start:
+          type: string
+          description: Horário de início do trabalho
+        work_end:
+          type: string
+          description: Horário de fim do trabalho
+        breaks:
+          type: array
+          items:
+            type: object
+            properties:
+              start:
+                type: string
+              end:
+                type: string
+              duration_minutes:
+                type: integer
+
+    NSFWThresholds:
+      type: object
+      properties:
+        porn_threshold:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          default: 0.5
+        hentai_threshold:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          default: 0.5
+        sexy_threshold:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          default: 0.7
+
+    Position:
+      type: object
+      properties:
+        x:
+          type: integer
+          description: Coordenada X
+        y:
+          type: integer
+          description: Coordenada Y
+        width:
+          type: integer
+          description: Largura
+        height:
+          type: integer
+          description: Altura
+
+    ConfigResult:
+      type: object
+      properties:
+        version:
+          type: string
+          description: Versão da API
+        thresholds:
+          type: object
+          description: Thresholds atuais
+        limits:
+          type: object
+          description: Limites de uso
+        features:
+          type: object
+          description: Funcionalidades habilitadas
+
+    ConfigUpdate:
+      type: object
+      properties:
+        thresholds:
+          type: object
+          description: Novos thresholds
+        limits:
+          type: object
+          description: Novos limites
+
+    HealthResult:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        uptime_seconds:
+          type: integer
+        components:
+          type: object
+          properties:
+            nsfwjs:
+              $ref: '#/components/schemas/ComponentHealth'
+            tesseract:
+              $ref: '#/components/schemas/ComponentHealth'
+            database:
+              $ref: '#/components/schemas/ComponentHealth'
+
+    ComponentHealth:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        response_time_ms:
+          type: integer
+        last_check:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Código do erro
+        message:
+          type: string
+          description: Mensagem de erro
+        details:
+          type: object
+          description: Detalhes adicionais do erro
+        request_id:
+          type: string
+          description: ID da requisição para rastreamento
+
+  responses:
+    BadRequest:
+      description: Requisição inválida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalid_image:
+              summary: Imagem inválida
+              value:
+                error: "INVALID_IMAGE"
+                message: "Formato de imagem não suportado. Use JPG, PNG ou WebP."
+                request_id: "req_1234567890"
+            missing_api_key:
+              summary: API key ausente
+              value:
+                error: "MISSING_API_KEY"
+                message: "API key é obrigatória. Forneça via header X-API-Key ou parâmetro api_key."
+                request_id: "req_1234567891"
+
+    Unauthorized:
+      description: Não autorizado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "UNAUTHORIZED"
+            message: "API key inválida ou expirada"
+            request_id: "req_1234567892"
+
+    Forbidden:
+      description: Acesso negado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "FORBIDDEN"
+            message: "Permissões insuficientes para esta operação"
+            request_id: "req_1234567893"
+
+    PayloadTooLarge:
+      description: Arquivo muito grande
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "PAYLOAD_TOO_LARGE"
+            message: "Arquivo excede o limite de 10MB"
+            request_id: "req_1234567894"
+
+    RateLimitExceeded:
+      description: Limite de taxa excedido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "RATE_LIMIT_EXCEEDED"
+            message: "Limite de 100 requisições por minuto excedido"
+            request_id: "req_1234567895"
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+          description: Limite de requisições
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+          description: Requisições restantes
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+          description: Timestamp de reset do limite
+
+    InternalServerError:
+      description: Erro interno do servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "INTERNAL_SERVER_ERROR"
+            message: "Erro interno do servidor. Tente novamente em alguns minutos."
+            request_id: "req_1234567896"
+
+tags:
+  - name: Análise Principal
+    description: Endpoints principais para análise de imagens
+  - name: Detecção Específica
+    description: Endpoints para análises específicas (NSFW, jogos, OCR)
+  - name: Análise Temporal
+    description: Análise de ociosidade e padrões temporais
+  - name: Configuração
+    description: Gerenciamento de configurações da API
+  - name: Sistema
+    description: Status, métricas e monitoramento
+
+externalDocs:
+  description: Documentação completa no GitHub
+  url: https://github.com/rafaesapata/content-detector

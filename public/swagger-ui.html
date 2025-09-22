@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector Inteligente API - Documentação</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui.css" />
+    <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.10.3/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.10.3/favicon-16x16.png" sizes="16x16" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            background: #fafafa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .swagger-ui .topbar {
+            background-color: #1f2937;
+            border-bottom: 1px solid #374151;
+        }
+
+        .swagger-ui .topbar .download-url-wrapper {
+            display: none;
+        }
+
+        .swagger-ui .info {
+            margin: 50px 0;
+        }
+
+        .swagger-ui .info .title {
+            font-size: 36px;
+            color: #1f2937;
+            font-weight: 700;
+        }
+
+        .swagger-ui .info .description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #4b5563;
+        }
+
+        .custom-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .custom-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .custom-header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+            padding: 0 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 1.2rem;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .quick-start {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem;
+        }
+
+        .quick-start h2 {
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+        }
+
+        .code-block {
+            background: #1f2937;
+            color: #f8fafc;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .endpoint-examples {
+            margin: 2rem;
+        }
+
+        .endpoint-example {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            background: #f8fafc;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .endpoint-content {
+            padding: 1rem;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+        }
+
+        .method-post {
+            background: #10b981;
+            color: white;
+        }
+
+        .method-get {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .method-put {
+            background: #f59e0b;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .custom-header h1 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+            
+            .stats-container {
+                gap: 1rem;
+            }
+            
+            .quick-start {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-header">
+        <h1>🔍 Detector Inteligente API</h1>
+        <p>Análise automatizada de imagens com IA - Versão 7.3.4</p>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-item">
+            <span class="stat-number">93%</span>
+            <div class="stat-label">Precisão NSFW</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">60+</span>
+            <div class="stat-label">Parâmetros Configuráveis</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <div class="stat-label">Processamento Local</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">4</span>
+            <div class="stat-label">Níveis de Borramento</div>
+        </div>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <h3>🔞 Detecção NSFW</h3>
+            <p>Classificação precisa de conteúdo adulto com 93% de acuidade usando NSFWJS. Suporte a múltiplas categorias: Porn, Hentai, Sexy, Drawing.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🎮 Detecção de Jogos</h3>
+            <p>Algoritmo híbrido otimizado para League of Legends e outros jogos. Análise de HUD, padrões visuais e elementos de interface.</p>
+        </div>
+        <div class="feature-card">
+            <h3>💻 OCR Avançado</h3>
+            <p>Extração de texto, URLs e detecção de software usando Tesseract.js. Suporte a 100+ idiomas com alta precisão.</p>
+        </div>
+        <div class="feature-card">
+            <h3>⏱️ Análise Temporal</h3>
+            <p>Monitoramento de ociosidade e padrões de produtividade através de comparação temporal de screenshots.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🔒 Borramento Automático</h3>
+            <p>4 níveis de proteção de evidências com borramento inteligente baseado no tipo de conteúdo detectado.</p>
+        </div>
+        <div class="feature-card">
+            <h3>📊 Resumo Gerencial</h3>
+            <p>Dashboard executivo com alertas priorizados e recomendações específicas para tomada de decisões.</p>
+        </div>
+    </div>
+
+    <div class="quick-start">
+        <h2>🚀 Início Rápido</h2>
+        <p>Comece a usar a API em poucos minutos:</p>
+        
+        <h3>1. Obter API Key</h3>
+        <div class="code-block">
+curl -X POST https://api.detector-inteligente.com/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "seu@email.com", "name": "Seu Nome"}'
+        </div>
+
+        <h3>2. Análise Básica</h3>
+        <div class="code-block">
+curl -X POST https://api.detector-inteligente.com/v1/analyze \
+  -H "X-API-Key: sua-api-key" \
+  -F "image=@screenshot.jpg"
+        </div>
+
+        <h3>3. Resposta JSON</h3>
+        <div class="code-block">
+{
+  "success": true,
+  "analysis_id": "ana_1234567890",
+  "nsfw": {
+    "detected": false,
+    "confidence": 0.15
+  },
+  "games": {
+    "detected": true,
+    "confidence": 0.78,
+    "game_name": "League of Legends"
+  },
+  "executive_summary": {
+    "status": "attention",
+    "alerts": [
+      {
+        "type": "attention",
+        "message": "Atividade de jogos detectada durante horário de trabalho"
+      }
+    ]
+  }
+}
+        </div>
+    </div>
+
+    <div class="endpoint-examples">
+        <h2>📋 Endpoints Principais</h2>
+        
+        <div class="endpoint-example">
+            <div class="endpoint-header">
+                <span class="method-badge method-post">POST</span>
+                /v1/analyze - Análise Completa
+            </div>
+            <div class="endpoint-content">
+                <p>Realiza análise completa incluindo NSFW, jogos, OCR e resumo gerencial.</p>
+                <strong>Parâmetros:</strong> image (file), blur_enabled (bool), sensitivity_level (string)
+            </div>
+        </div>
+
+        <div class="endpoint-example">
+            <div class="endpoint-header">
+                <span class="method-badge method-post">POST</span>
+                /v1/analyze/batch - Análise em Lote
+            </div>
+            <div class="endpoint-content">
+                <p>Processa múltiplas imagens de um ZIP com análise temporal de ociosidade.</p>
+                <strong>Parâmetros:</strong> zip_file (file), include_idleness (bool), time_analysis (bool)
+            </div>
+        </div>
+
+        <div class="endpoint-example">
+            <div class="endpoint-header">
+                <span class="method-badge method-post">POST</span>
+                /v1/analyze/nsfw - Detecção NSFW Específica
+            </div>
+            <div class="endpoint-content">
+                <p>Análise focada apenas em conteúdo NSFW com thresholds personalizáveis.</p>
+                <strong>Parâmetros:</strong> image (file), thresholds (object)
+            </div>
+        </div>
+
+        <div class="endpoint-example">
+            <div class="endpoint-header">
+                <span class="method-badge method-get">GET</span>
+                /v1/health - Status da API
+            </div>
+            <div class="endpoint-content">
+                <p>Verifica saúde da API e componentes com métricas de performance.</p>
+                <strong>Resposta:</strong> Status, uptime, componentes, métricas
+            </div>
+        </div>
+    </div>
+
+    <div id="swagger-ui"></div>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            // Carregar especificação Swagger
+            const ui = SwaggerUIBundle({
+                url: './swagger.yaml',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                defaultModelsExpandDepth: 1,
+                defaultModelExpandDepth: 1,
+                docExpansion: "list",
+                filter: true,
+                showExtensions: true,
+                showCommonExtensions: true,
+                tryItOutEnabled: true,
+                requestInterceptor: function(request) {
+                    // Adicionar API key automaticamente se disponível
+                    const apiKey = localStorage.getItem('detector-api-key');
+                    if (apiKey && !request.headers['X-API-Key']) {
+                        request.headers['X-API-Key'] = apiKey;
+                    }
+                    return request;
+                },
+                responseInterceptor: function(response) {
+                    // Log de respostas para debug
+                    console.log('API Response:', response);
+                    return response;
+                },
+                onComplete: function() {
+                    console.log('Swagger UI carregado com sucesso');
+                    
+                    // Adicionar funcionalidade para salvar API key
+                    const topbar = document.querySelector('.topbar');
+                    if (topbar) {
+                        const apiKeyInput = document.createElement('input');
+                        apiKeyInput.type = 'text';
+                        apiKeyInput.placeholder = 'Sua API Key';
+                        apiKeyInput.style.cssText = 'margin-left: 20px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;';
+                        
+                        const saveButton = document.createElement('button');
+                        saveButton.textContent = 'Salvar API Key';
+                        saveButton.style.cssText = 'margin-left: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                        
+                        saveButton.onclick = function() {
+                            const apiKey = apiKeyInput.value.trim();
+                            if (apiKey) {
+                                localStorage.setItem('detector-api-key', apiKey);
+                                alert('API Key salva com sucesso!');
+                                apiKeyInput.value = '';
+                            }
+                        };
+                        
+                        // Carregar API key salva
+                        const savedKey = localStorage.getItem('detector-api-key');
+                        if (savedKey) {
+                            apiKeyInput.placeholder = 'API Key salva: ' + savedKey.substring(0, 8) + '...';
+                        }
+                        
+                        topbar.appendChild(apiKeyInput);
+                        topbar.appendChild(saveButton);
+                    }
+                },
+                validatorUrl: null // Desabilitar validação online
+            });
+
+            // Adicionar informações de versão
+            setTimeout(function() {
+                const info = document.querySelector('.swagger-ui .info');
+                if (info) {
+                    const versionBadge = document.createElement('div');
+                    versionBadge.innerHTML = `
+                        <div style="margin: 1rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">v7.3.4</span>
+                            <span style="background: #3b82f6; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">OpenAPI 3.0</span>
+                            <span style="background: #f59e0b; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MIT License</span>
+                            <span style="background: #8b5cf6; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LGPD Compliant</span>
+                        </div>
+                    `;
+                    info.appendChild(versionBadge);
+                }
+            }, 1000);
+        };
+
+        // Adicionar funcionalidade de tema escuro
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('dark-theme');
+            localStorage.setItem('theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
+        }
+
+        // Carregar tema salvo
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+    </script>
+
+    <style>
+        /* Tema escuro */
+        .dark-theme {
+            background: #1a202c;
+            color: #e2e8f0;
+        }
+
+        .dark-theme .custom-header {
+            background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
+        }
+
+        .dark-theme .feature-card,
+        .dark-theme .stat-item,
+        .dark-theme .endpoint-example {
+            background: #2d3748;
+            color: #e2e8f0;
+        }
+
+        .dark-theme .quick-start {
+            background: #2d3748;
+            border-color: #4a5568;
+        }
+
+        /* Responsividade adicional */
+        @media (max-width: 480px) {
+            .stats-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-item {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+
+    <footer style="background: #1f2937; color: #9ca3af; padding: 2rem; text-align: center; margin-top: 3rem;">
+        <p>&copy; 2025 Detector Inteligente. Desenvolvido por <a href="https://github.com/rafaesapata" style="color: #667eea;">Rafael Sapata</a></p>
+        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+            <a href="https://github.com/rafaesapata/content-detector" style="color: #9ca3af; text-decoration: none;">GitHub</a> | 
+            <a href="https://github.com/rafaesapata/content-detector/blob/main/LICENSE" style="color: #9ca3af; text-decoration: none;">Licença MIT</a> | 
+            <a href="https://github.com/rafaesapata/content-detector/issues" style="color: #9ca3af; text-decoration: none;">Suporte</a>
+        </p>
+    </footer>
+</body>
+</html>
